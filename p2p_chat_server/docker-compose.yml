@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  synapse:
+    image: matrixdotorg/synapse:latest
+    container_name: synapse
+    ports:
+      - "8008:8008"  # Expose HTTP port
+      - "8448:8448"  # Expose HTTPS port (optional, for federation)
+    volumes:
+      - ./data:/data  # Persist data
+      - ./config:/config  # Persist configuration
+      - ./media_store:/media_store  # Mount media store
+    environment:
+      - SYNAPSE_SERVER_NAME=localhost
+      - SYNAPSE_REPORT_STATS=no
+      - SYNAPSE_CONFIG_PATH=/config/homeserver.yaml
+    restart: always
+
+networks:
+  default:
+    driver: bridge
