@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'chats_list_page.dart';
+import 'home_page.dart';
 
 void main() {
   runApp(P2PChatApp());
@@ -13,7 +13,7 @@ class P2PChatApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: ChatsListPage(),
+      home: HomePage(),
     );
   }
 }
