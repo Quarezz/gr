@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "name": "Flutter (Pixel 6a API 32)",
+            "program": "lib/main.dart",
+            "cwd": "p2p_chat_app",
+            "deviceId": "emulator-5554",
+            "request": "launch",
+            "type": "dart"
+        }
+    ]
+}
