@@ -1,22 +1,64 @@
-version: '3.8'
+# This compose file is compatible with Compose itself, it might need some
+# adjustments to run properly with stack.
+
+version: '3'
 
 services:
-  synapse:
-    image: matrixdotorg/synapse:latest
-    container_name: synapse
-    ports:
-      - "8008:8008"  # Expose HTTP port
-      - "8448:8448"  # Expose HTTPS port (optional, for federation)
-    volumes:
-      - ./data:/data  # Persist data
-      - ./config:/config  # Persist configuration
-      - ./media_store:/media_store  # Mount media store
-    environment:
-      - SYNAPSE_SERVER_NAME=localhost
-      - SYNAPSE_REPORT_STATS=no
-      - SYNAPSE_CONFIG_PATH=/config/homeserver.yaml
-    restart: always
 
-networks:
-  default:
-    driver: bridge
+  synapse:
+    image: docker.io/matrixdotorg/synapse:latest
+    # Since synapse does not retry to connect to the database, restart upon
+    # failure
+    restart: unless-stopped
+    # See the readme for a full documentation of the environment settings
+    # NOTE: You must edit homeserver.yaml to use postgres, it defaults to sqlite
+    environment:
+      - SYNAPSE_CONFIG_PATH=/data/homeserver.yaml
+    volumes:
+      # You may either store all the files in a local folder
+      - ./files:/data
+      # .. or you may split this between different storage points
+      # - ./files:/data
+      # - /path/to/ssd:/data/uploads
+      # - /path/to/large_hdd:/data/media
+    depends_on:
+      - postgres
+    # In order to expose Synapse, remove one of the following, you might for
+    # instance expose the TLS port directly:
+    ports:
+      - 8448:8448/tcp
+      - 8008:8008
+    # ... or use a reverse proxy, here is an example for traefik:
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.http-synapse.entryPoints=http
+      - traefik.http.routers.http-synapse.rule=Host(`my.matrix.host`)
+    
+  element-ui:
+    image: vectorim/element-web
+    ports:
+      - 80:80
+    depends_on:
+      - postgres
+      - synapse
+    volumes:
+      - /etc/element-web/config.json:/app/config.json vectorim/element-web
+
+  postgres:
+    image: docker.io/postgres:12-alpine
+    # Change that password, of course!
+    environment:
+      - POSTGRES_USER=synapse
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=synapse
+      # ensure the database gets created correctly
+      # https://element-hq.github.io/synapse/latest/postgres.html#set-up-database
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+
+    ports:
+      - 5432:5432
+    volumes:
+      # You may store the database tables in a local folder..
+      - ./schemas:/var/lib/postgresql/data
+      # .. or store them on some high performance storage for better results
+      # - /path/to/ssd/storage:/var/lib/postgresql/data
