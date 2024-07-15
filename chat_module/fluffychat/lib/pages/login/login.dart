@@ -105,6 +105,7 @@ class LoginController extends State<Login> {
     final oldHomeserver = Matrix.of(context).getLoginClient().homeserver;
     try {
       var newDomain = Uri.https(userId.domain!, '');
+      print('foo: new homeserver: $newDomain');
       Matrix.of(context).getLoginClient().homeserver = newDomain;
       DiscoveryInformation? wellKnownInformation;
       try {
@@ -120,6 +121,7 @@ class LoginController extends State<Login> {
         await Matrix.of(context).getLoginClient().checkHomeserver(newDomain);
 
         if (Matrix.of(context).getLoginClient().homeserver == null) {
+          print('foo: new homeserver: $oldHomeserver');
           Matrix.of(context).getLoginClient().homeserver = oldHomeserver;
           // okay, the server we checked does not appear to be a matrix server
           Logs().v(
@@ -143,12 +145,14 @@ class LoginController extends State<Login> {
         usernameError = null;
         if (mounted) setState(() {});
       } else {
+        print('foo: new homeserver: $oldHomeserver');
         Matrix.of(context).getLoginClient().homeserver = oldHomeserver;
         if (mounted) {
           setState(() {});
         }
       }
     } catch (e) {
+      print('foo: new homeserver: $oldHomeserver');
       Matrix.of(context).getLoginClient().homeserver = oldHomeserver;
       usernameError = e.toLocalizedString(context);
       if (mounted) setState(() {});

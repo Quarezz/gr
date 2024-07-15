@@ -14,11 +14,13 @@ class LoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final homeserver = Matrix.of(context)
-        .getLoginClient()
-        .homeserver
-        .toString()
-        .replaceFirst('https://', '');
+    //final homeserver = Matrix.of(context)
+    //    .getLoginClient()
+    //    .homeserver
+    //    .toString()
+    //    .replaceFirst('https://', '');
+
+    var homeserver = '10.0.2.2:8008';
     final title = L10n.of(context)!.logInTo(homeserver);
     final titleParts = title.split(homeserver);
 
