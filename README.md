@@ -1,15 +1,26 @@
-Fluffy chat: https://github.com/krille-chan/fluffychat/releases/tag/v1.21.2
+## Server
 
-h2. Chat embedding guide
+* matrix: docker.io/matrixdotorg/synapse:latest
+* db: docker.io/postgres:12-alpine
+* web client: vectorim/element-web
+
+## Mobile Client
+
+* Fluffy chat: https://github.com/krille-chan/fluffychat/releases/tag/v1.21.2
+
+## Implementation
+
+Matrix is deployed inside a docker alongside element web client and postgres DB.
+Mobile app is an empty Flutter app that imports FluffyChat that was adjusted to be a flutter module.
+FluffyChat also has a hardcoded default local homeserver.
+
+## Setup
 * Clone this repo
-* cd p2p_chat_app
-* run ./bootstrap-mac.sh script (or ./bootstrap-win.ps1)
-   * It will install all necessary dependencies
-   * At the end - it will print a flutter disgnostic report
-* Install Android Studio
-   * Install 34 sdk using SDK Manager (Android 14.0)
-   * Install NDK, SDK command line tools, Android Emulator, Android SDK Platform-tools
-   * Create a virtual device using Device Manager
-      * Assign 34 API 
-   * Start the device using Devices Manager
-* call flutter run
+* `cd p2p_chat_server`
+* `docker-compose up`
+* `cd ../p2p_chat_app`
+* (optional) run ./bootstrap-mac.sh (or for windows ./bootstrap-win.ps1)
+* (optional) install Android Studio, SDK/NKD and Android 34 API
+   * Launch Android Emulator using Device Manager
+* (optional) check the setup using `flutter doctor`
+* `flutter run`
