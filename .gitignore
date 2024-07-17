@@ -11,3 +11,5 @@ p2p_chat_server/schemas
 
 # Built Visual Studio Code Extensions
 *.vsix
+/p2p_chat_server/schemas
+/.vscode
