@@ -24,3 +24,7 @@ FluffyChat also has a hardcoded default local homeserver.
    * Launch Android Emulator using Device Manager
 * (optional) check the setup using `flutter doctor`
 * `flutter run`
+## Usage
+* Navigate to http://localhost:8080 to use WEB UI
+* Register new user
+* Lunch flatter app on emulator and login with user credential used during registration
