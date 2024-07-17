@@ -7,8 +7,10 @@ abstract class AppConfig {
   static String get applicationName => _applicationName;
   static String? _applicationWelcomeMessage;
   static String? get applicationWelcomeMessage => _applicationWelcomeMessage;
-  static String _defaultHomeserver = 'matrix.org';
+  static String _defaultHomeserver = 'http://10.0.2.2:8008';
   static String get defaultHomeserver => _defaultHomeserver;
+  static String get defaultHomeserverRegisterUrl =>
+      'http://10.0.2.2:8008/_matrix/client/v3/register';
   static double fontSizeFactor = 1;
   static const Color chatColor = primaryColor;
   static Color? colorSchemeSeed = primaryColor;

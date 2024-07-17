@@ -15,7 +15,6 @@ services:
     environment:
       - SYNAPSE_CONFIG_PATH=/data/homeserver.yaml
     volumes:
-      # You may either store all the files in a local folder
       - ./files:/data
       # .. or you may split this between different storage points
       # - ./files:/data
@@ -37,7 +36,7 @@ services:
   element-ui:
     image: vectorim/element-web
     ports:
-      - 80:80
+      - 8080:80
     depends_on:
       - postgres
       - synapse

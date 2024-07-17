@@ -1,10 +1,29 @@
 {
     "configurations": [
+
+
+
         {
-            "name": "Flutter (Pixel 6a API 32)",
+            "name": "Flutter Ghost",
             "program": "lib/main.dart",
             "cwd": "p2p_chat_app",
             "deviceId": "emulator-5554",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "Flutter Price",
+            "program": "lib/main.dart",
+            "cwd": "p2p_chat_app",
+            "deviceId": "emulator-5556",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "Flutter Shepherd",
+            "program": "lib/main.dart",
+            "cwd": "p2p_chat_app",
+            "deviceId": "emulator-5556",
             "request": "launch",
             "type": "dart"
         }

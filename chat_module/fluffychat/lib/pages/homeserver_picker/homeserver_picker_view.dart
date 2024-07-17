@@ -26,14 +26,14 @@ class HomeserverPickerView extends StatelessWidget {
           homeserver.name ==
           controller.homeserverController.text.trim().toLowerCase(),
     );
-    final regLink = publicHomeserver?.regLink;
+    final regLink = AppConfig.defaultHomeserverRegisterUrl;
     return LoginScaffold(
       enforceMobileMode: Matrix.of(context).client.isLogged(),
       appBar: AppBar(
         titleSpacing: 12,
         automaticallyImplyLeading: false,
         surfaceTintColor: Theme.of(context).colorScheme.surface,
-        title: HomeserverAppBar(controller: controller),
+        title: Text('Homeserver: ${AppConfig.defaultHomeserver}'),
       ),
       body: Column(
         children: [
@@ -97,19 +97,7 @@ class HomeserverPickerView extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 36),
-                      ] else
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 0.0,
-                            right: 8.0,
-                            left: 8.0,
-                            bottom: 16.0,
-                          ),
-                          child: Image.asset(
-                            'assets/banner_transparent.png',
-                          ),
-                        ),
-                      if (identityProviders != null) ...[
+                      ] else if (identityProviders != null) ...[
                         ...identityProviders.map(
                           (provider) => _LoginButton(
                             icon: provider.icon == null
