@@ -17,20 +17,10 @@ import '../../widgets/matrix.dart';
 import 'chat_list_body.dart';
 import 'start_chat_fab.dart';
 
-class ChatListView extends StatefulWidget {
+class ChatListView extends StatelessWidget {
   final ChatListController controller;
 
   const ChatListView(this.controller, {super.key});
-
-  @override
-  ChatListState createState() => ChatListState(controller: controller);
-}
-
-class ChatListState extends State<ChatListView> {
-  final ChatListController controller;
-  int currentTab = 0;
-
-  ChatListState({required this.controller});
 
   List<NavigationDestination> getNavigationDestinations(BuildContext context) {
     final badgePosition = BadgePosition.topEnd(top: -12, end: -8);

@@ -111,12 +111,8 @@ abstract class AppRoutes {
           pageBuilder: (context, state) => defaultPageBuilder(
               context,
               state,
-              FluffyThemes.isColumnMode(context)
-                  ? const EmptyPage()
-                  // : ChatList(
-                  //     activeChat: state.pathParameters['roomid'],
-                  //   ),
-                  : HomeTabsWidget()),
+              const HomeTabsWidget()
+          ),
           routes: [
             GoRoute(
               path: 'archive',

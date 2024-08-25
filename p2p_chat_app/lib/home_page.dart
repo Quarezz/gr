@@ -1,3 +1,4 @@
+import 'package:fluffychat/config/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -12,8 +13,12 @@ import 'package:fluffychat/config/setting_keys.dart';
 import 'package:fluffychat/utils/background_push.dart';
 import 'package:fluffychat/widgets/fluffy_chat_app.dart';
 
+import 'package:go_router/go_router.dart';
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+
+  static final GoRouter router = GoRouter(routes: AppRoutes.routes);
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +68,7 @@ class HomePage extends StatelessWidget {
     ///runApp(FluffyChatApp(clients: clients, pincode: pin, store: store));
 
     /// TODO: rewrite to sync
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
           builder: (context) =>
