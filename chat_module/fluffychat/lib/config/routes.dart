@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fluffychat/pages/home/home_tabs.dart';
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
@@ -108,14 +109,14 @@ abstract class AppRoutes {
           path: '/rooms',
           redirect: loggedOutRedirect,
           pageBuilder: (context, state) => defaultPageBuilder(
-            context,
-            state,
-            FluffyThemes.isColumnMode(context)
-                ? const EmptyPage()
-                : ChatList(
-                    activeChat: state.pathParameters['roomid'],
-                  ),
-          ),
+              context,
+              state,
+              FluffyThemes.isColumnMode(context)
+                  ? const EmptyPage()
+                  // : ChatList(
+                  //     activeChat: state.pathParameters['roomid'],
+                  //   ),
+                  : HomeTabsWidget()),
           routes: [
             GoRoute(
               path: 'archive',
