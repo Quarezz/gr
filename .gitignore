@@ -1,3 +1,5 @@
+.idea/
+/.idea/
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -13,3 +15,6 @@ p2p_chat_server/schemas
 *.vsix
 /p2p_chat_server/schemas
 /.vscode
+
+*.xcconfig
+*Podfile

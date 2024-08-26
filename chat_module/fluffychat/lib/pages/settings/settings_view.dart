@@ -22,11 +22,6 @@ class SettingsView extends StatelessWidget {
     final showChatBackupBanner = controller.showChatBackupBanner;
     return Scaffold(
       appBar: AppBar(
-        leading: Center(
-          child: CloseButton(
-            onPressed: () => context.go('/rooms'),
-          ),
-        ),
         title: Text(L10n.of(context)!.settings),
         actions: [
           TextButton.icon(
@@ -160,31 +155,31 @@ class SettingsView extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.format_paint_outlined),
               title: Text(L10n.of(context)!.changeTheme),
-              onTap: () => context.go('/rooms/settings/style'),
+              onTap: () => context.go('/settings/style'),
               trailing: const Icon(Icons.chevron_right_outlined),
             ),
             ListTile(
               leading: const Icon(Icons.notifications_outlined),
               title: Text(L10n.of(context)!.notifications),
-              onTap: () => context.go('/rooms/settings/notifications'),
+              onTap: () => context.go('/settings/notifications'),
               trailing: const Icon(Icons.chevron_right_outlined),
             ),
             ListTile(
               leading: const Icon(Icons.devices_outlined),
               title: Text(L10n.of(context)!.devices),
-              onTap: () => context.go('/rooms/settings/devices'),
+              onTap: () => context.go('/settings/devices'),
               trailing: const Icon(Icons.chevron_right_outlined),
             ),
             ListTile(
               leading: const Icon(Icons.forum_outlined),
               title: Text(L10n.of(context)!.chat),
-              onTap: () => context.go('/rooms/settings/chat'),
+              onTap: () => context.go('/settings/chat'),
               trailing: const Icon(Icons.chevron_right_outlined),
             ),
             ListTile(
               leading: const Icon(Icons.shield_outlined),
               title: Text(L10n.of(context)!.security),
-              onTap: () => context.go('/rooms/settings/security'),
+              onTap: () => context.go('/settings/security'),
               trailing: const Icon(Icons.chevron_right_outlined),
             ),
             Divider(

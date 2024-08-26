@@ -36,6 +36,8 @@ import 'package:fluffychat/widgets/layouts/two_column_layout.dart';
 import 'package:fluffychat/widgets/log_view.dart';
 import 'package:fluffychat/widgets/matrix.dart';
 
+import '../pages/home/contacts.dart';
+
 abstract class AppRoutes {
   static FutureOr<String?> loggedInRedirect(
     BuildContext context,
@@ -50,6 +52,12 @@ abstract class AppRoutes {
       Matrix.of(context).client.isLogged() ? null : '/home';
 
   AppRoutes();
+
+  // Tabs Routing destinations
+  static const String kPageContacts = 'contacts';
+  static const String kPageChats = 'rooms';
+  static const String kPageSettings = 'settings';
+  //
 
   static final List<RouteBase> routes = [
     GoRoute(
@@ -86,35 +94,147 @@ abstract class AppRoutes {
       ),
     ),
     ShellRoute(
-      pageBuilder: (context, state, child) => defaultPageBuilder(
-        context,
-        state,
-        FluffyThemes.isColumnMode(context) &&
-                state.fullPath?.startsWith('/rooms/settings') == false
-            ? TwoColumnLayout(
-                displayNavigationRail:
-                    state.path?.startsWith('/rooms/settings') != true,
-                mainView: ChatList(
-                  activeChat: state.pathParameters['roomid'],
-                  displayNavigationRail:
-                      state.path?.startsWith('/rooms/settings') != true,
-                ),
-                sideView: child,
-              )
-            : child,
-      ),
+      pageBuilder: (context, state, child) => tabsPageBuilder(context, state, child),
       routes: [
         GoRoute(
-          path: '/rooms',
+          path: '/contacts',
           redirect: loggedOutRedirect,
+          pageBuilder: (context, state) => defaultPageBuilder(
+              context,
+              state,
+              const ContactList(contacts: []),
+          ),
+        ),
+        GoRoute(
+          path: '/settings',
           pageBuilder: (context, state) => defaultPageBuilder(
             context,
             state,
             FluffyThemes.isColumnMode(context)
                 ? const EmptyPage()
-                : ChatList(
-                    activeChat: state.pathParameters['roomid'],
+                : const Settings(),
+          ),
+          routes: [
+            GoRoute(
+              path: 'notifications',
+              pageBuilder: (context, state) => defaultPageBuilder(
+                context,
+                state,
+                const SettingsNotifications(),
+              ),
+              redirect: loggedOutRedirect,
+            ),
+            GoRoute(
+              path: 'style',
+              pageBuilder: (context, state) => defaultPageBuilder(
+                context,
+                state,
+                const SettingsStyle(),
+              ),
+              redirect: loggedOutRedirect,
+            ),
+            GoRoute(
+              path: 'devices',
+              pageBuilder: (context, state) => defaultPageBuilder(
+                context,
+                state,
+                const DevicesSettings(),
+              ),
+              redirect: loggedOutRedirect,
+            ),
+            GoRoute(
+              path: 'chat',
+              pageBuilder: (context, state) => defaultPageBuilder(
+                context,
+                state,
+                const SettingsChat(),
+              ),
+              routes: [
+                GoRoute(
+                  path: 'emotes',
+                  pageBuilder: (context, state) => defaultPageBuilder(
+                    context,
+                    state,
+                    const EmotesSettings(),
                   ),
+                ),
+              ],
+              redirect: loggedOutRedirect,
+            ),
+            GoRoute(
+              path: 'addaccount',
+              redirect: loggedOutRedirect,
+              pageBuilder: (context, state) => defaultPageBuilder(
+                context,
+                state,
+                const HomeserverPicker(),
+              ),
+              routes: [
+                GoRoute(
+                  path: 'login',
+                  pageBuilder: (context, state) => defaultPageBuilder(
+                    context,
+                    state,
+                    const Login(),
+                  ),
+                  redirect: loggedOutRedirect,
+                ),
+              ],
+            ),
+            GoRoute(
+              path: 'security',
+              redirect: loggedOutRedirect,
+              pageBuilder: (context, state) => defaultPageBuilder(
+                context,
+                state,
+                const SettingsSecurity(),
+              ),
+              routes: [
+                GoRoute(
+                  path: 'password',
+                  pageBuilder: (context, state) {
+                    return defaultPageBuilder(
+                      context,
+                      state,
+                      const SettingsPassword(),
+                    );
+                  },
+                  redirect: loggedOutRedirect,
+                ),
+                GoRoute(
+                  path: 'ignorelist',
+                  pageBuilder: (context, state) {
+                    return defaultPageBuilder(
+                      context,
+                      state,
+                      SettingsIgnoreList(
+                        initialUserId: state.extra?.toString(),
+                      ),
+                    );
+                  },
+                  redirect: loggedOutRedirect,
+                ),
+                GoRoute(
+                  path: '3pid',
+                  pageBuilder: (context, state) => defaultPageBuilder(
+                    context,
+                    state,
+                    const Settings3Pid(),
+                  ),
+                  redirect: loggedOutRedirect,
+                ),
+              ],
+            ),
+          ],
+          redirect: loggedOutRedirect,
+        ),
+        GoRoute(
+          path: '/rooms',
+          redirect: loggedOutRedirect,
+          pageBuilder: (context, state) => defaultPageBuilder(
+              context,
+              state,
+              const ChatList(activeChat: "1")
           ),
           routes: [
             GoRoute(
@@ -166,144 +286,6 @@ abstract class AppRoutes {
                 const NewSpace(),
               ),
               redirect: loggedOutRedirect,
-            ),
-            ShellRoute(
-              pageBuilder: (context, state, child) => defaultPageBuilder(
-                context,
-                state,
-                FluffyThemes.isColumnMode(context)
-                    ? TwoColumnLayout(
-                        mainView: const Settings(),
-                        sideView: child,
-                        displayNavigationRail: false,
-                      )
-                    : child,
-              ),
-              routes: [
-                GoRoute(
-                  path: 'settings',
-                  pageBuilder: (context, state) => defaultPageBuilder(
-                    context,
-                    state,
-                    FluffyThemes.isColumnMode(context)
-                        ? const EmptyPage()
-                        : const Settings(),
-                  ),
-                  routes: [
-                    GoRoute(
-                      path: 'notifications',
-                      pageBuilder: (context, state) => defaultPageBuilder(
-                        context,
-                        state,
-                        const SettingsNotifications(),
-                      ),
-                      redirect: loggedOutRedirect,
-                    ),
-                    GoRoute(
-                      path: 'style',
-                      pageBuilder: (context, state) => defaultPageBuilder(
-                        context,
-                        state,
-                        const SettingsStyle(),
-                      ),
-                      redirect: loggedOutRedirect,
-                    ),
-                    GoRoute(
-                      path: 'devices',
-                      pageBuilder: (context, state) => defaultPageBuilder(
-                        context,
-                        state,
-                        const DevicesSettings(),
-                      ),
-                      redirect: loggedOutRedirect,
-                    ),
-                    GoRoute(
-                      path: 'chat',
-                      pageBuilder: (context, state) => defaultPageBuilder(
-                        context,
-                        state,
-                        const SettingsChat(),
-                      ),
-                      routes: [
-                        GoRoute(
-                          path: 'emotes',
-                          pageBuilder: (context, state) => defaultPageBuilder(
-                            context,
-                            state,
-                            const EmotesSettings(),
-                          ),
-                        ),
-                      ],
-                      redirect: loggedOutRedirect,
-                    ),
-                    GoRoute(
-                      path: 'addaccount',
-                      redirect: loggedOutRedirect,
-                      pageBuilder: (context, state) => defaultPageBuilder(
-                        context,
-                        state,
-                        const HomeserverPicker(),
-                      ),
-                      routes: [
-                        GoRoute(
-                          path: 'login',
-                          pageBuilder: (context, state) => defaultPageBuilder(
-                            context,
-                            state,
-                            const Login(),
-                          ),
-                          redirect: loggedOutRedirect,
-                        ),
-                      ],
-                    ),
-                    GoRoute(
-                      path: 'security',
-                      redirect: loggedOutRedirect,
-                      pageBuilder: (context, state) => defaultPageBuilder(
-                        context,
-                        state,
-                        const SettingsSecurity(),
-                      ),
-                      routes: [
-                        GoRoute(
-                          path: 'password',
-                          pageBuilder: (context, state) {
-                            return defaultPageBuilder(
-                              context,
-                              state,
-                              const SettingsPassword(),
-                            );
-                          },
-                          redirect: loggedOutRedirect,
-                        ),
-                        GoRoute(
-                          path: 'ignorelist',
-                          pageBuilder: (context, state) {
-                            return defaultPageBuilder(
-                              context,
-                              state,
-                              SettingsIgnoreList(
-                                initialUserId: state.extra?.toString(),
-                              ),
-                            );
-                          },
-                          redirect: loggedOutRedirect,
-                        ),
-                        GoRoute(
-                          path: '3pid',
-                          pageBuilder: (context, state) => defaultPageBuilder(
-                            context,
-                            state,
-                            const Settings3Pid(),
-                          ),
-                          redirect: loggedOutRedirect,
-                        ),
-                      ],
-                    ),
-                  ],
-                  redirect: loggedOutRedirect,
-                ),
-              ],
             ),
             GoRoute(
               path: ':roomid',
@@ -439,6 +421,13 @@ abstract class AppRoutes {
     ),
   ];
 
+  static int _getTabIndexFromPath(String path) {
+    if (path.startsWith('/$kPageContacts')) return 0;
+    if (path.startsWith('/$kPageChats')) return 1;
+    if (path.startsWith('/$kPageSettings')) return 2;
+    return 1; // default to second tab
+  }
+
   static Page defaultPageBuilder(
     BuildContext context,
     GoRouterState state,
@@ -455,4 +444,37 @@ abstract class AppRoutes {
               restorationId: state.pageKey.value,
               child: child,
             );
+  static Page tabsPageBuilder(
+      BuildContext context,
+      GoRouterState state,
+      Widget child
+  ) =>
+      MaterialPage(
+        key: state.pageKey,
+        restorationId: state.pageKey.value,
+        child: Scaffold(
+            body: child,
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: _getTabIndexFromPath(state.matchedLocation),
+              onTap: (index) {
+                switch (index) {
+                  case 0:
+                    context.go('/$kPageContacts');
+                    break;
+                  case 1:
+                    context.go('/$kPageChats');
+                    break;
+                  case 2:
+                    context.go('/$kPageSettings');
+                    break;
+                }
+              },
+              items: const [
+                BottomNavigationBarItem(icon: Icon(Icons.contacts), label: 'Контакти'),
+                BottomNavigationBarItem(icon: Icon(Icons.chat), label: 'Месенджер'),
+                BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Особова справа'),
+              ],
+            )
+        ),
+      );
 }
