@@ -102,7 +102,7 @@ abstract class AppRoutes {
           pageBuilder: (context, state) => defaultPageBuilder(
               context,
               state,
-              const ContactList(contacts: []),
+              ContactList(),
           ),
         ),
         GoRoute(
