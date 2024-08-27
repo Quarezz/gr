@@ -176,7 +176,47 @@ class MessageContent extends StatelessWidget {
               );
             }
             // else we fall through to the normal message rendering
-            continue textmessage;
+            // Handling normal text message with date
+            final messageText = event.calcLocalizedBodyFallback(
+              MatrixLocals(L10n.of(context)!),
+              hideReply: true,
+            );
+            final dateText = event.originServerTs.localizedTime(context);
+            return Container(
+              padding: const EdgeInsets.all(8.0),
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.7, // Limit max width
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min, // Ensure the Row fits its content
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  // Message text
+                  Flexible( // Use Flexible to make the text wrap
+                    child: Text(
+                      messageText,
+                      style: TextStyle(
+                        color: textColor,
+                        fontSize: fontSize,
+                      ),
+                    ),
+                  ),
+                  // Spacing between text and date
+                  SizedBox(width: 8.0),
+                  // Date text with inset from the bottom
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 1.0),
+                    child: Text(
+                      dateText,
+                      style: TextStyle(
+                        color: textColor.withOpacity(0.6),
+                        fontSize: fontSize * 0.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
           case MessageTypes.BadEncrypted:
           case EventTypes.Encrypted:
             return _ButtonContent(

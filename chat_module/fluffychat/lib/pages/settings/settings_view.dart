@@ -22,7 +22,7 @@ class SettingsView extends StatelessWidget {
     final showChatBackupBanner = controller.showChatBackupBanner;
     return Scaffold(
       appBar: AppBar(
-        title: Text(L10n.of(context)!.settings),
+        title: Text("Особова справа"),
         actions: [
           TextButton.icon(
             onPressed: controller.logoutAction,
