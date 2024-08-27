@@ -29,8 +29,7 @@ class MessageContent extends StatelessWidget {
   final void Function(Event)? onInfoTab;
   final BorderRadius borderRadius;
 
-  const MessageContent(
-    this.event, {
+  const MessageContent(this.event, {
     this.onInfoTab,
     super.key,
     required this.textColor,
@@ -49,10 +48,14 @@ class MessageContent extends StatelessWidget {
       );
       return;
     }
-    final client = Matrix.of(context).client;
+    final client = Matrix
+        .of(context)
+        .client;
     if (client.isUnknownSession && client.encryption!.crossSigning.enabled) {
       final success = await BootstrapDialog(
-        client: Matrix.of(context).client,
+        client: Matrix
+            .of(context)
+            .client,
       ).show(context);
       if (success != true) return;
     }
@@ -60,40 +63,43 @@ class MessageContent extends StatelessWidget {
     final sender = event.senderFromMemoryOrFallback;
     await showAdaptiveBottomSheet(
       context: context,
-      builder: (context) => Scaffold(
-        appBar: AppBar(
-          leading: CloseButton(onPressed: Navigator.of(context).pop),
-          title: Text(
-            l10n.whyIsThisMessageEncrypted,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ),
-        body: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: Avatar(
-                  mxContent: sender.avatarUrl,
-                  name: sender.calcDisplayname(),
-                  presenceUserId: sender.stateKey,
-                  client: event.room.client,
-                ),
-                title: Text(sender.calcDisplayname()),
-                subtitle: Text(event.originServerTs.localizedTime(context)),
-                trailing: const Icon(Icons.lock_outlined),
+      builder: (context) =>
+          Scaffold(
+            appBar: AppBar(
+              leading: CloseButton(onPressed: Navigator
+                  .of(context)
+                  .pop),
+              title: Text(
+                l10n.whyIsThisMessageEncrypted,
+                style: const TextStyle(fontSize: 16),
               ),
-              const Divider(),
-              Text(
-                event.calcLocalizedBodyFallback(
-                  MatrixLocals(l10n),
-                ),
+            ),
+            body: SafeArea(
+              child: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Avatar(
+                      mxContent: sender.avatarUrl,
+                      name: sender.calcDisplayname(),
+                      presenceUserId: sender.stateKey,
+                      client: event.room.client,
+                    ),
+                    title: Text(sender.calcDisplayname()),
+                    subtitle: Text(event.originServerTs.localizedTime(context)),
+                    trailing: const Icon(Icons.lock_outlined),
+                  ),
+                  const Divider(),
+                  Text(
+                    event.calcLocalizedBodyFallback(
+                      MatrixLocals(l10n),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 
@@ -142,12 +148,12 @@ class MessageContent extends StatelessWidget {
             return CuteContent(event);
           case MessageTypes.Audio:
             if (PlatformInfos.isMobile ||
-                    PlatformInfos.isMacOS ||
-                    PlatformInfos.isWeb
-                // Disabled until https://github.com/bleonard252/just_audio_mpv/issues/3
-                // is fixed
-                //   || PlatformInfos.isLinux
-                ) {
+                PlatformInfos.isMacOS ||
+                PlatformInfos.isWeb
+            // Disabled until https://github.com/bleonard252/just_audio_mpv/issues/3
+            // is fixed
+            //   || PlatformInfos.isLinux
+            ) {
               return AudioPlayerWidget(
                 event,
                 color: textColor,
@@ -169,54 +175,18 @@ class MessageContent extends StatelessWidget {
               if (event.messageType == MessageTypes.Emote) {
                 html = '* $html';
               }
-              return HtmlMessage(
-                html: html,
+              return _MessageWithDate(
+                messageChild: HtmlMessage(
+                  html: html,
+                  textColor: textColor,
+                  room: event.room,
+                ),
+                date: event.originServerTs.localizedTime(context),
+                fontSize: fontSize,
                 textColor: textColor,
-                room: event.room,
               );
             }
-            // else we fall through to the normal message rendering
-            // Handling normal text message with date
-            final messageText = event.calcLocalizedBodyFallback(
-              MatrixLocals(L10n.of(context)!),
-              hideReply: true,
-            );
-            final dateText = event.originServerTs.localizedTime(context);
-            return Container(
-              padding: const EdgeInsets.all(8.0),
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.7, // Limit max width
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min, // Ensure the Row fits its content
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  // Message text
-                  Flexible( // Use Flexible to make the text wrap
-                    child: Text(
-                      messageText,
-                      style: TextStyle(
-                        color: textColor,
-                        fontSize: fontSize,
-                      ),
-                    ),
-                  ),
-                  // Spacing between text and date
-                  SizedBox(width: 8.0),
-                  // Date text with inset from the bottom
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 1.0),
-                    child: Text(
-                      dateText,
-                      style: TextStyle(
-                        color: textColor.withOpacity(0.6),
-                        fontSize: fontSize * 0.5,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
+            continue textmessage;
           case MessageTypes.BadEncrypted:
           case EventTypes.Encrypted:
             return _ButtonContent(
@@ -228,7 +198,7 @@ class MessageContent extends StatelessWidget {
             );
           case MessageTypes.Location:
             final geoUri =
-                Uri.tryParse(event.content.tryGet<String>('geo_uri')!);
+            Uri.tryParse(event.content.tryGet<String>('geo_uri')!);
             if (geoUri != null && geoUri.scheme == 'geo') {
               final latlong = geoUri.path
                   .split(';')
@@ -250,7 +220,7 @@ class MessageContent extends StatelessWidget {
                     OutlinedButton.icon(
                       icon: Icon(Icons.location_on_outlined, color: textColor),
                       onPressed:
-                          UrlLauncher(context, geoUri.toString()).launchUrl,
+                      UrlLauncher(context, geoUri.toString()).launchUrl,
                       label: Text(
                         L10n.of(context)!.openInMaps,
                         style: TextStyle(color: textColor),
@@ -269,7 +239,7 @@ class MessageContent extends StatelessWidget {
                 future: event.redactedBecause?.fetchSenderUser(),
                 builder: (context, snapshot) {
                   final reason =
-                      event.redactedBecause?.content.tryGet<String>('reason');
+                  event.redactedBecause?.content.tryGet<String>('reason');
                   final redactedBy = snapshot.data?.calcDisplayname() ??
                       event.redactedBecause?.senderId.localpart ??
                       L10n.of(context)!.user;
@@ -277,9 +247,9 @@ class MessageContent extends StatelessWidget {
                     label: reason == null
                         ? L10n.of(context)!.redactedBy(redactedBy)
                         : L10n.of(context)!.redactedByBecause(
-                            redactedBy,
-                            reason,
-                          ),
+                      redactedBy,
+                      reason,
+                    ),
                     icon: '🗑️',
                     textColor: buttonTextColor,
                     onPressed: () => onInfoTab!(event),
@@ -291,24 +261,33 @@ class MessageContent extends StatelessWidget {
             final bigEmotes = event.onlyEmotes &&
                 event.numberEmotes > 0 &&
                 event.numberEmotes <= 10;
-            return Linkify(
-              text: event.calcLocalizedBodyFallback(
-                MatrixLocals(L10n.of(context)!),
-                hideReply: true,
+            final messageText = event.calcLocalizedBodyFallback(
+              MatrixLocals(L10n.of(context)!),
+              hideReply: true,
+            );
+            return _MessageWithDate(
+              messageChild: Linkify(
+                text: messageText,
+                maxLines: null,
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: bigEmotes ? fontSize * 3 : fontSize,
+                  decoration:
+                  event.redacted ? TextDecoration.lineThrough : null,
+                ),
+                options: const LinkifyOptions(humanize: false),
+                linkStyle: TextStyle(
+                  color: textColor.withAlpha(150),
+                  fontSize: bigEmotes ? fontSize * 3 : fontSize,
+                  decoration: TextDecoration.underline,
+                  decorationColor: textColor.withAlpha(150),
+                ),
+                onOpen: (url) =>
+                    UrlLauncher(context, url.url).launchUrl(),
               ),
-              style: TextStyle(
-                color: textColor,
-                fontSize: bigEmotes ? fontSize * 3 : fontSize,
-                decoration: event.redacted ? TextDecoration.lineThrough : null,
-              ),
-              options: const LinkifyOptions(humanize: false),
-              linkStyle: TextStyle(
-                color: textColor.withAlpha(150),
-                fontSize: bigEmotes ? fontSize * 3 : fontSize,
-                decoration: TextDecoration.underline,
-                decorationColor: textColor.withAlpha(150),
-              ),
-              onOpen: (url) => UrlLauncher(context, url.url).launchUrl(),
+              date: event.originServerTs.localizedTime(context),
+              fontSize: fontSize,
+              textColor: textColor,
             );
         }
       case EventTypes.CallInvite:
@@ -374,6 +353,43 @@ class _ButtonContent extends StatelessWidget {
           fontSize: fontSize,
         ),
       ),
+    );
+  }
+}
+
+class _MessageWithDate extends StatelessWidget {
+  final Widget messageChild;
+  final String date;
+  final Color textColor;
+  final double fontSize;
+
+  const _MessageWithDate({
+    required this.messageChild,
+    required this.date,
+    required this.textColor,
+    required this.fontSize,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Container(
+          padding: EdgeInsets.fromLTRB(0, 0, 64, 8),
+          child: messageChild
+        ),
+        Positioned(
+          right: 0,
+          bottom: 0,
+          child: Text(
+            date,
+            style: TextStyle(
+              fontSize: fontSize * 0.8,
+              color: textColor.withAlpha(150),
+            ),
+          ),
+        )
+      ],
     );
   }
 }
